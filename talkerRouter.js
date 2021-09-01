@@ -82,7 +82,7 @@ function validateWatchedAtAndRate(req, res, next) {
     return next({ status: 400, message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"' });
   }
 
-  if (rate > 5 || rate < 1) {
+  if (rate < 1 || rate > 5) {
     return next({ status: 400, message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
 
@@ -110,16 +110,16 @@ validateWatchedAtAndRate, readTalkers, (req, res, next) => {
 }, overwriteTalker, readTalkers, (req, res) => {
   const { arrayTalkers } = req;
 
-  const addedTalker = arrayTalkers.at(-1);
+  const addedTalker = arrayTalkers[arrayTalkers.length - 1];
 
   res.status(201).json(addedTalker);
 });
 
 router.get('/:id', readTalkers, (req, res, next) => {
   const { id } = req.params;
-  const { talkers } = req;
+  const { arrayTalkers } = req;
   
-  const findTalker = talkers.find((talker) => talker.id === parseInt(id, 10));
+  const findTalker = arrayTalkers.find((talker) => talker.id === parseInt(id, 10));
 
   if (!findTalker) return next({ status: 404, message: 'Pessoa palestrante não encontrada' });
 
