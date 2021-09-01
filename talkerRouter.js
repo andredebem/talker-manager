@@ -1,14 +1,12 @@
 const fs = require('fs').promises;
-
 const express = require('express');
 
 const router = express.Router();
-
-const talkersLocation = './talker.json';
+const talkerLocation = './talker.json';
 
 async function readTalkers(req, res, next) {
   try {
-    const file = await fs.readFile(talkersLocation);
+    const file = await fs.readFile(talkerLocation);
 
     req.talkers = JSON.parse(file);
 
