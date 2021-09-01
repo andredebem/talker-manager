@@ -3,7 +3,7 @@ const randtoken = require('rand-token');
 
 const router = express.Router();
 
-router.post('/login', (req, res, next) => {
+router.post('/', (req, res, next) => {
   const { email, password } = req.body;
   const validEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
