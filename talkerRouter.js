@@ -104,7 +104,7 @@ validateWatchedAtAndRate, readTalkers, (req, res, next) => {
 
   arrayTalkers.push(newTalker);
 
-  req.newArrayTalker = arrayTalkers;
+  req.newArrayTalkers = arrayTalkers;
 
   next();
 }, overwriteTalker, readTalkers, (req, res) => {
