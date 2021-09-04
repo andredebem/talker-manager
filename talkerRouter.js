@@ -64,7 +64,7 @@ function validateNameAndAge(req, res, next) {
 function validateTalk(req, res, next) {
   const { talk } = req.body;
 
-  if (!talk || !talk.watchedAt || !talk.rate) {
+  if (!talk || !talk.watchedAt || talk.rate === undefined) {
     return next({
       status: 400,
       message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
@@ -82,7 +82,7 @@ function validateWatchedAtAndRate(req, res, next) {
     return next({ status: 400, message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"' });
   }
 
-  if (rate < 1 || rate > 5) {
+  if (rate < 1 || rate > 5 || typeof rate !== 'number') {
     return next({ status: 400, message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
 
@@ -124,6 +124,30 @@ router.get('/:id', readTalkers, (req, res, next) => {
   if (!findTalker) return next({ status: 404, message: 'Pessoa palestrante não encontrada' });
 
   res.status(200).json(findTalker);
+});
+
+router.put('/:id', validateToken, validateNameAndAge, validateTalk,
+validateWatchedAtAndRate, readTalkers, (req, res, next) => {
+  const { id } = req.params;
+  const { arrayTalkers } = req;
+  const { name, age, talk } = req.body;
+
+  const findTalker = arrayTalkers.find((talker) => talker.id === parseInt(id, 10));
+  if (!findTalker) return next({ status: 404, message: 'Pessoa palestrante não encontrada' });
+
+  const editedTalker = { ...findTalker, name, age, talk };
+
+  const updatedArrayTalkers = arrayTalkers.filter((talker) => talker.id !== editedTalker.id);
+  updatedArrayTalkers.push(editedTalker);
+
+  req.newArrayTalkers = updatedArrayTalkers;
+  req.editedTalker = editedTalker;
+
+  next();
+}, overwriteTalker, (req, res) => {
+  const { editedTalker } = req;
+
+  res.status(200).json(editedTalker);
 });
 
 module.exports = router;
