@@ -150,4 +150,21 @@ validateWatchedAtAndRate, readTalkers, (req, res, next) => {
   res.status(200).json(editedTalker);
 });
 
+router.delete('/:id', validateToken, readTalkers, (req, res, next) => {
+  const { id } = req.params;
+  const { arrayTalkers } = req;
+
+  const findTalker = arrayTalkers.find((talker) => talker.id === parseInt(id, 10));
+
+  if (!findTalker) return next({ status: 404, message: 'Pessoa palestrante não encontrada' });
+
+  const updatedArrayTalkers = arrayTalkers.filter((talker) => talker.id !== parseInt(id, 10));
+
+  req.newArrayTalkers = updatedArrayTalkers;
+
+  next();
+}, overwriteTalker, (req, res) => {
+  res.status(200).json({ message: 'Pessoa palestrante deletada com sucesso' });
+});
+
 module.exports = router;
