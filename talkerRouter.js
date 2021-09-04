@@ -115,6 +115,17 @@ validateWatchedAtAndRate, readTalkers, (req, res, next) => {
   res.status(201).json(addedTalker);
 });
 
+router.get('/search', validateToken, readTalkers, (req, res) => {
+  const { q } = req.query;
+  const { arrayTalkers } = req;
+
+  if (!q) return res.status(200).json(arrayTalkers);
+
+  const searchTalkers = arrayTalkers.filter((talk) => talk.name.includes(q));
+
+  res.status(200).json(searchTalkers);
+});
+
 router.get('/:id', readTalkers, (req, res, next) => {
   const { id } = req.params;
   const { arrayTalkers } = req;
